@@ -163,14 +163,13 @@ struct Conv2DIsFullyConnected : public OpRewritePattern<tosa::Conv2DOp> {
 
     Value fullyConnectedValue;
     if (iZp != 0 || wZp != 0) {
-      auto zeroPointAttr =
-          rewriter.getAttr<tosa::ConvOpQuantizationAttr>(iZp, wZp);
-      fullyConnectedValue =
-          rewriter
-              .create<tosa::FullyConnectedOp>(
-                  op.getLoc(), fullyConnectedShapeType, reshapedInput,
-                  reshapedWeight, op.getBias(), zeroPointAttr)
-              .getResult();
+      fullyConnectedValue = rewriter
+                                .create<tosa::FullyConnectedOp>(
+                                    op.getLoc(), fullyConnectedShapeType,
+                                    reshapedInput, reshapedWeight, op.getBias(),
+                                    rewriter.getI32IntegerAttr(iZp),
+                                    rewriter.getI32IntegerAttr(wZp))
+                                .getResult();
     } else {
       fullyConnectedValue = rewriter
                                 .create<tosa::FullyConnectedOp>(

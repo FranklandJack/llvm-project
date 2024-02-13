@@ -168,7 +168,7 @@ public:
       weight = CreateOpAndInferShape<tosa::PadOp>(
           rewriter, loc, UnrankedTensorType::get(weightETy), weight,
           weightPaddingVal, nullptr,
-          rewriter.getAttr<PadOpQuantizationAttr>(weightZpVal));
+          rewriter.getI32IntegerAttr(weightZpVal));
 
     } else {
       weight = CreateOpAndInferShape<tosa::PadOp>(
@@ -231,7 +231,7 @@ public:
       input = CreateOpAndInferShape<tosa::PadOp>(
           rewriter, loc, UnrankedTensorType::get(inputETy), input,
           inputPaddingVal, nullptr,
-          rewriter.getAttr<PadOpQuantizationAttr>(inputZpVal));
+          rewriter.getI32IntegerAttr(inputZpVal));
     } else {
       input = CreateOpAndInferShape<tosa::PadOp>(
           rewriter, loc, UnrankedTensorType::get(inputETy), input,
