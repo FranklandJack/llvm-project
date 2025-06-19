@@ -36,6 +36,7 @@ struct TosaToArith : public impl::TosaToArithPassBase<TosaToArith> {
     RewritePatternSet patterns(&getContext());
     ConversionTarget target(getContext());
     target.addIllegalOp<tosa::ConstOp>();
+    target.addLegalOp<tensor::CastOp>();
     target.addLegalDialect<arith::ArithDialect>();
 
     mlir::tosa::populateTosaToArithConversionPatterns(&patterns);

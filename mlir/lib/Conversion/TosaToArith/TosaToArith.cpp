@@ -12,6 +12,7 @@
 
 #include "mlir/Conversion/TosaToArith/TosaToArith.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
+#include "mlir/Dialect/Tensor/IR/Tensor.h"
 #include "mlir/Dialect/Tosa/IR/TosaOps.h"
 #include "mlir/IR/PatternMatch.h"
 #include "mlir/IR/TypeUtilities.h"
@@ -28,6 +29,15 @@ public:
 
   LogicalResult matchAndRewrite(tosa::ConstOp op,
                                 PatternRewriter &rewriter) const final {
+    if (auto tensorTy = dyn_cast<RankedTensorType>(op->getResultTypes()[0]);
+        tensorTy.getEncoding()) {
+      auto constOp = rewriter.create<arith::ConstantOp>(
+          op.getLoc(), op.getValues().getType(), op.getValues());
+      rewriter.replaceOpWithNewOp<tensor::CastOp>(op, op.getType(),
+                                                  constOp.getResult());
+      return success();
+    }
+
     rewriter.replaceOpWithNewOp<arith::ConstantOp>(op, op.getValues());
     return success();
   }

@@ -12,6 +12,18 @@ func.func @const_test() -> (tensor<i32>) {
 
 // -----
 
+// CHECK-LABEL: func @const_test_with_encoding
+func.func @const_test_with_encoding() -> (tensor<i32, 42 : i32>) {
+  // CHECK: [[CONST:%.+]] = arith.constant dense<3> : tensor<i32>
+  // CHECK: [[CAST:%.+]] = tensor.cast [[CONST]] : tensor<i32> to tensor<i32, 42 : i32>
+  %result = "tosa.const"() {values = dense<3> : tensor<i32>} : () -> tensor<i32, 42 : i32>
+
+  // CHECK: return [[CAST]] : tensor<i32, 42 : i32>
+  return %result : tensor<i32, 42 : i32>
+}
+
+// -----
+
 // CHECK-LABEL: @apply_scale_test_i32
 // SCALE: tosa.apply_scale
 func.func @apply_scale_test_i32(%arg0 : i32, %arg1 : i32, %arg2 : i8) -> (i32) {
